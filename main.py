@@ -101,20 +101,23 @@ def chat():
     print("Start talking with the bot (Type quit to stop) !")
     while True:
         inp = input("You: ")
-        if inp.lower() == "quit":
+        if inp.lower() == "quit" or "bye":
             break
 
-        results = model.predict([bag_of_words(inp, words)])
+        results = model.predict([bag_of_words(inp, words)])[0]
         # print(results) > you will get only a probability so we have to get the best prob
         results_index = numpy.argmax(results)  # gratest value
         tag = labels[results_index]
         # print(tag) shows the tag according to the answer
 
-        for tg in data["intents"]:
-            if tg['tag'] == tag:
-                responses = tg['responses']
+        if results[results_index] > 0.7:
+            for tg in data["intents"]:
+                if tg['tag'] == tag:
+                    responses = tg['responses']
 
-        print(random.choice(responses))
+            print(random.choice(responses))
+        else:
+            print("I didn't get that , Try again ! ")
 
 
 chat()
